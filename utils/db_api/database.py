@@ -5,6 +5,7 @@ import aiomysql
 from aiomysql import Pool
 
 from data.db_models import User, Chat
+from data import config
 
 
 class Database:
@@ -13,11 +14,11 @@ class Database:
         self.pool: Optional[Pool] = None
 
     async def connect(self) -> None:
-        self.pool = await aiomysql.create_pool(host='localhost',
-                                               port=3306,
-                                               user='log',
-                                               password='pass',
-                                               db='dbname')
+        self.pool = await aiomysql.create_pool(host=config.MYSQL_HOST,
+                                               port=int(config.MYSQL_PORT),
+                                               user=config.MYSQL_USERNAME,
+                                               password=config.MYSQL_PASSWORD,
+                                               db=config.MYSQL_DB_NAME)
 
     async def execute(self, sql: str, parameters: tuple = (),
                       fetchone: bool = False, fetchall: bool = False, commit: bool = False) -> Optional[tuple]:
