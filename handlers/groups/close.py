@@ -10,7 +10,6 @@ from utils.misc.game_process.service_defs import unmute_chat
 
 @dp.message_handler(Command('close'), GroupFilter(), AdminFilter())
 async def close1(message: types.Message):
-    await message.answer_photo(photo='')
     chat_obj = Game.get_chat(message.chat.id)
     if not chat_obj:
         await message.delete()
