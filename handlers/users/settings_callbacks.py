@@ -1,4 +1,3 @@
-import time
 
 from aiogram import types
 
@@ -18,9 +17,9 @@ from loader import dp, db
 async def settings_cbq(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
 
     if action == 'exit':
@@ -92,10 +91,11 @@ async def settings_cbq(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_mute_dead(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_dead_talk=0)
@@ -112,10 +112,11 @@ async def stg_mute_dead(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_mute_no_players(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_nonplayers_talk=0)
@@ -132,10 +133,11 @@ async def stg_mute_no_players(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_reg_time(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = int(callback_data.get('action'))
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in [30, 45, 60, 80, 120, 240]:
         await db.set_chat(chat_id, register_time=action)
         await cbq.answer('Успешно!')
@@ -149,10 +151,11 @@ async def stg_reg_time(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_night_time(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = int(callback_data.get('action'))
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in [30, 45, 60, 80, 120, 240]:
         await db.set_chat(chat_id, night_time=action)
         await cbq.answer('Успешно!')
@@ -166,10 +169,11 @@ async def stg_night_time(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_day_time(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = int(callback_data.get('action'))
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in [30, 45, 60, 80, 120, 240]:
         await db.set_chat(chat_id, day_time=action)
         await cbq.answer('Успешно!')
@@ -183,10 +187,11 @@ async def stg_day_time(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_voting_time(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = int(callback_data.get('action'))
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in [30, 45, 60, 80, 120, 240]:
         await db.set_chat(chat_id, vote_time=action)
         await cbq.answer('Успешно!')
@@ -200,10 +205,11 @@ async def stg_voting_time(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_accept_time(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = int(callback_data.get('action'))
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in [30, 45, 60, 80, 120, 240]:
         await db.set_chat(chat_id, accept_time=action)
         await cbq.answer('Успешно!')
@@ -217,10 +223,11 @@ async def stg_accept_time(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_pin(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_pin_register=1)
@@ -237,10 +244,11 @@ async def stg_pin(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_boosts(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_active_boosts=1)
@@ -257,10 +265,11 @@ async def stg_boosts(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_show_roles(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_show_dead_roles=1)
@@ -277,10 +286,11 @@ async def stg_show_roles(cbq: types.CallbackQuery, callback_data: dict):
 async def stg_show_votes(cbq: types.CallbackQuery, callback_data: dict):
     chat_id = int(callback_data.get('chat_id'))
     action = callback_data.get('action')
-    old_time = int(callback_data.get('time'))
-    if int(time.time()) - old_time > 900:
-        await cbq.answer('Сообщение устарело!')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
         return await cbq.message.delete()
+
     if action in ['yes', 'no']:
         if action == 'yes':
             await db.set_chat(chat_id, is_show_day_votes=1)
