@@ -1,5 +1,5 @@
 
-from typing import Union, Optional
+from typing import Optional
 
 import aiomysql
 from aiomysql import Pool
@@ -10,7 +10,7 @@ from data.db_models import User, Chat
 class Database:
 
     def __init__(self) -> None:
-        self.pool: Union[Pool, None] = None
+        self.pool: Optional[Pool] = None
 
     async def connect(self) -> None:
         self.pool = await aiomysql.create_pool(host='localhost',
@@ -54,53 +54,47 @@ class Database:
         await self.new_chat(chat_id)
         return await self.get_chat(chat_id)
 
-    async def new_player(self, user_id) -> int:
+    async def new_player(self, user_id) -> None:
         sql: str = """
         INSERT IGNORE INTO player (user_id) VALUES (%s)
         """
         await self.execute(sql, parameters=(user_id), commit=True)
-        return 0
 
-    async def new_chat(self, chat_id) -> int:
+    async def new_chat(self, chat_id) -> None:
         sql: str = """
         INSERT IGNORE INTO chat (chat_id) VALUES (%s)
         """
         await self.execute(sql, parameters=(chat_id), commit=True)
-        return 0
 
-    async def set_player(self, user_id, **kwargs) -> int:
+    async def set_player(self, user_id, **kwargs) -> None:
         query: str = f"{', '.join([f'{i}=%s' for i in kwargs])}"
         sql: str = f"""
         UPDATE player SET {query} WHERE user_id={user_id}
         """
         params: tuple = tuple(i for x, i in kwargs.items())
         await self.execute(sql, parameters=params, commit=True)
-        return 0
 
-    async def upd_player(self, user_id, **kwargs) -> int:
+    async def upd_player(self, user_id, **kwargs) -> None:
         query: str = f"{', '.join([f'{i}={i}+%s' for i in kwargs])}"
         sql: str = f"""
         UPDATE player SET {query} WHERE user_id={user_id}
         """
         params: tuple = tuple(i for x, i in kwargs.items())
         await self.execute(sql, parameters=params, commit=True)
-        return 0
 
-    async def set_chat(self, chat_id, **kwargs) -> int:
+    async def set_chat(self, chat_id, **kwargs) -> None:
         query: str = f"{', '.join([f'{i}=%s' for i in kwargs])}"
         sql: str = f"""
         UPDATE chat SET {query} WHERE chat_id={chat_id}
         """
         params: tuple = tuple(i for x, i in kwargs.items())
         await self.execute(sql, parameters=params, commit=True)
-        return 0
 
-    async def upd_chat(self, chat_id, **kwargs) -> int:
+    async def upd_chat(self, chat_id, **kwargs) -> None:
         query: str = f"{', '.join([f'{i}={i}+%s' for i in kwargs])}"
         sql: str = f"""
         UPDATE chat SET {query} WHERE chat_id={chat_id}
         """
         params: tuple = tuple(i for x, i in kwargs.items())
         await self.execute(sql, parameters=params, commit=True)
-        return 0
 
