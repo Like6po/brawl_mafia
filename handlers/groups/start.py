@@ -14,24 +14,7 @@ from utils.misc.game_process.timer_to_start import timer_to_start_game
 @dp.message_handler(CommandStart(), GroupFilter())
 async def start(message: types.Message):
     chat_obj = Game.get_chat(message.chat.id)
-    if chat_obj:
-        if chat_obj.phase == 'starting':
-            # если регистрация, ответить, что идет регистрация
-            await bot.send_message(message.chat.id,
-                                   f"❌ {message.from_user.get_mention()}, регистрация уже идёт!",
-                                   reply_to_message_id=chat_obj.register_message_id)
-        elif chat_obj.phase == 'day':
-            # если день, ответить, что игра идет
-            await message.delete()
-            temp_message = await message.answer(f"❌ {message.from_user.get_mention()}, игра уже идёт!")
-            await asyncio.sleep(5)
-            await temp_message.delete()
-
-        elif chat_obj.phase == 'night':
-            # если ночь, удалить
-            await message.delete()
-
-    else:
+    if not chat_obj:
         chat = await db.get_chat(message.chat.id)
         if message.chat.username:
             await db.set_chat(message.chat.id, chat_title=message.chat.title, chat_username=message.chat.username)
@@ -58,4 +41,21 @@ async def start(message: types.Message):
         if chat.is_pin_register:
             await register_message.pin()
 
-        await timer_to_start_game(register_message, chat.register_time, message.chat.id)
+        return await timer_to_start_game(register_message, chat.register_time, message.chat.id)
+
+    if chat_obj.phase == 'starting':
+        # если регистрация, ответить, что идет регистрация
+        return await bot.send_message(message.chat.id,
+                                      f"❌ {message.from_user.get_mention()}, регистрация уже идёт!",
+                                      reply_to_message_id=chat_obj.register_message_id)
+
+    if chat_obj.phase == 'day':
+        # если день, ответить, что игра идет
+        await message.delete()
+        temp_message = await message.answer(f"❌ {message.from_user.get_mention()}, игра уже идёт!")
+        await asyncio.sleep(5)
+        return await temp_message.delete()
+
+    if chat_obj.phase == 'night':
+        # если ночь, удалить
+        return await message.delete()

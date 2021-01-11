@@ -1,8 +1,8 @@
-import aiogram
+
 from aiogram import types
+
 from aiogram.dispatcher.filters import Command
 
-from data.db_models import User, Chat
 from filters import GroupFilter
 from keyboards.inline.help import help_kb
 from loader import dp

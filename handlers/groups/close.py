@@ -12,16 +12,15 @@ from utils.misc.game_process.service_defs import unmute_chat
 async def close1(message: types.Message):
     await message.answer_photo(photo='')
     chat_obj = Game.get_chat(message.chat.id)
-    if chat_obj:
-        await message.reply("⚠️ Игра успешно остановлена! Новый подбор можно начать с помощью команды /start")
-        await unmute_chat(chat_obj)
-        Game.remove_chat(chat_obj)
-
-    else:
+    if not chat_obj:
         await message.delete()
         temp_message = await message.answer(f'⚠️ {message.from_user.get_mention()}, сначала нужно начать новую игру!')
         await asyncio.sleep(3)
-        await temp_message.delete()
+        return await temp_message.delete()
+
+    await message.reply("⚠️ Игра успешно остановлена! Новый подбор можно начать с помощью команды /start")
+    await unmute_chat(chat_obj)
+    Game.remove_chat(chat_obj)
 
 
 @dp.message_handler(Command('close'), GroupFilter())

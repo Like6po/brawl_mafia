@@ -22,16 +22,22 @@ async def any_messages(message: types.Message):
                                    types.ContentType.STICKER])
 async def any_messages(message: types.Message):
     chat_obj = Game.get_chat(message.chat.id)
-    if chat_obj:
-        player_obj = chat_obj.get_player(message.from_user.id)
-        # если есть такой игрок
-        if player_obj:
-            if Kill() in player_obj.effects or Mute() in player_obj.effects:
-                await message.delete()
+    if not chat_obj:
+        return
+    if chat_obj.phase == 'night':
+        return await message.delete()
 
-            elif chat_obj.phase == 'night':
-                await message.delete()
+    player_obj = chat_obj.get_player(message.from_user.id)
+    # если есть такой игрок
+    if not player_obj:
+        if chat_obj.phase != 'starting' and not chat_obj.is_nonplayers_talk:
+            await message.delete()
+        return
 
-        else:
-            if chat_obj.phase != 'starting' and not chat_obj.is_nonplayers_talk:
-                await message.delete()
+    if Kill() in player_obj.effects or Mute() in player_obj.effects:
+        return await message.delete()
+
+
+
+
+
