@@ -4,6 +4,12 @@ start_callback = CallbackData('start', 'type')
 
 help_callback = CallbackData('help', 'type')
 
+#######################
+profile_callback = CallbackData('profile', 'type')
+
+shop_callback = CallbackData('shop', 'type')
+########################
+
 night_cop_callback = CallbackData('night_cop',
                                   'action',
                                   'chat_id')
@@ -29,6 +35,8 @@ voting_callback = CallbackData('voting',
                                'action',
                                'player_id',
                                'chat_id')
+
+####################################
 
 settings_callback = CallbackData('stg',
                                  'action',

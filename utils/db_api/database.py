@@ -3,6 +3,7 @@ from typing import Optional
 
 import aiomysql
 from aiomysql import Pool
+from pymysql import IntegrityError
 
 from data.db_models import User, Chat
 from data import config
@@ -99,3 +100,12 @@ class Database:
         params: tuple = tuple(i for x, i in kwargs.items())
         await self.execute(sql, parameters=params, commit=True)
 
+    async def new_payment(self, payment_id, amount, user_id):
+        sql: str = f"""
+        INSERT INTO transactions (transaction_id, amount, user_id) VALUES (%s, %s, %s)
+        """
+        try:
+            await self.execute(sql, parameters=(payment_id, amount, user_id), commit=True)
+            return True
+        except IntegrityError:
+            return False
