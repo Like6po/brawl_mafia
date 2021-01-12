@@ -5,6 +5,7 @@ import time
 from typing import Optional
 
 from aiogram import types
+from aiogram.utils.exceptions import MessageToReplyNotFound, MessageToDeleteNotFound
 
 from data.game_models import Conv
 from keyboards.inline.game_process import game_go_to_bot_kb
@@ -52,14 +53,22 @@ async def timer_to_start_game(message: types.Message, time_to_sleep: int, chat_i
     if Game.get_chat(chat_id):
         message1: Optional[types.Message] = None
         if not chat_obj.register_is_end_ahead_of_time:
-            message1 = await bot.send_message(chat_id, game_msg_register_is_end_on_time(time_to_sleep),
-                                              reply_to_message_id=message.message_id)
+            try:
+                message1 = await bot.send_message(chat_id, game_msg_register_is_end_on_time(time_to_sleep),
+                                                  reply_to_message_id=message.message_id)
+            except MessageToReplyNotFound:
+                message1 = await message.answer(game_msg_register_is_end_on_time(time_to_sleep))
         await register_sleeper(time_to_sleep // 2, chat_obj)
 
-        await message.delete()
+        try:
+            await message.delete()
+        except MessageToDeleteNotFound:
+            pass
         try:
             await message1.delete()
-        except:
+        except MessageToDeleteNotFound:
+            pass
+        except AttributeError:
             pass
 
     if Game.get_chat(chat_id):

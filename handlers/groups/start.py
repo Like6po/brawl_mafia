@@ -2,6 +2,7 @@ import asyncio
 
 from aiogram import types
 from aiogram.dispatcher.filters import CommandStart
+from aiogram.utils.exceptions import MessageToReplyNotFound
 
 from data.game_models import Conv
 from filters import GroupFilter
@@ -45,9 +46,12 @@ async def start(message: types.Message):
 
     if chat_obj.phase == 'starting':
         # если регистрация, ответить, что идет регистрация
-        return await bot.send_message(message.chat.id,
-                                      f"❌ {message.from_user.get_mention()}, регистрация уже идёт!",
-                                      reply_to_message_id=chat_obj.register_message_id)
+        try:
+            return await bot.send_message(message.chat.id,
+                                          f"❌ {message.from_user.get_mention()}, регистрация уже идёт!",
+                                          reply_to_message_id=chat_obj.register_message_id)
+        except MessageToReplyNotFound:
+            return await message.answer(f"❌ {message.from_user.get_mention()}, регистрация уже идёт!")
 
     if chat_obj.phase == 'day':
         # если день, ответить, что игра идет

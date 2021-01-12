@@ -1,10 +1,13 @@
 import logging
 
-from loader import dp
+from aiogram import types
+from aiogram.utils.markdown import hbold
+
+from loader import dp, Game
 
 
 @dp.errors_handler()
-async def errors_handler(update, exception):
+async def errors_handler(update: types.update.Update, exception):
     """
     Exceptions handler. Catches all exceptions within task factory tasks.
     :param dispatcher:
@@ -15,10 +18,26 @@ async def errors_handler(update, exception):
     from aiogram.utils.exceptions import (Unauthorized, InvalidQueryID, TelegramAPIError,
                                           CantDemoteChatCreator, MessageNotModified, MessageToDeleteNotFound,
                                           MessageTextIsEmpty, RetryAfter,
-                                          CantParseEntities, MessageCantBeDeleted)
+                                          CantParseEntities, MessageCantBeDeleted, BadRequest,
+                                          NotEnoughRightsToPinMessage)
 
     if isinstance(exception, CantDemoteChatCreator):
         logging.debug("Can't demote chat creator")
+        return True
+
+    if isinstance(exception, BadRequest):
+        logging.exception(f'BadRequest: {exception} \nUpdate: {update}')
+
+        if exception.args[0].lower() in ['not enough rights to change chat permissions',
+                                         'not enough rights to manage pinned messages in the chat',
+                                         "message can't be deleted"]:
+            await dp.bot.send_message(update.message.chat.id, f'Для адекватной работы мне необходимы '
+                                                              f'права {hbold("Блокировка участников")}, '
+                                                              f'{hbold("Закрепление сообщений")} '
+                                                              f'и {hbold("Удаление сообщений")}!\n'
+                                                              f'Верните меня в беседу и выдайте нужные права!')
+            Game.remove_chat(Game.get_chat(update.message.chat.id))
+            await dp.bot.leave_chat(update.message.chat.id)
         return True
 
     if isinstance(exception, MessageNotModified):
@@ -38,6 +57,8 @@ async def errors_handler(update, exception):
 
     if isinstance(exception, Unauthorized):
         logging.info(f'Unauthorized: {exception}')
+        if exception.args[0] == 'Forbidden: bot is not a member of the supergroup chat':
+            Game.remove_chat(Game.get_chat(update.message.chat.id))
         return True
 
     if isinstance(exception, InvalidQueryID):
@@ -50,7 +71,9 @@ async def errors_handler(update, exception):
     if isinstance(exception, RetryAfter):
         logging.exception(f'RetryAfter: {exception} \nUpdate: {update}')
         return True
+
     if isinstance(exception, CantParseEntities):
         logging.exception(f'CantParseEntities: {exception} \nUpdate: {update}')
         return True
     logging.exception(f'Update: {update} \n{exception}')
+
