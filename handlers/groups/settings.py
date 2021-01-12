@@ -28,7 +28,7 @@ async def settings1(message: types.Message):
                               f"Пин регистрации: {'Да' if chat_data.is_pin_register else 'Нет'}\n"
                               f"Бустеры: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                               f"Показ ролей: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
-                              f"Тайное голосование: {'Да' if chat_data.is_show_day_votes else 'Нет'}"
+                              f"Тайное голосование: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
                               f"Приветственное сообщение: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
                               reply_markup=settings_kb_show_to_admin(chat_id))
 
