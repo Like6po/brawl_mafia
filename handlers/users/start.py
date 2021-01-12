@@ -28,7 +28,7 @@ async def start_deep(message: types.Message):
                     return await message.answer('👥 Невозможно присоединиться, максимальное количество игроков!')
 
                 if user.active_roles > 0 and chat_obj.is_active_boosts:
-                    await db.upd_user(message.from_user.id, active_role=-1)
+                    await db.upd_player(message.from_user.id, active_role=-1)
                     chat_obj.register_player(Player(message.from_user.id,
                                                     user_name=message.from_user.full_name,
                                                     active_role=1))
