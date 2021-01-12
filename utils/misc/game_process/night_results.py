@@ -1,4 +1,4 @@
-from aiogram.utils.markdown import hlink
+from aiogram.utils.markdown import hlink, hbold
 
 from data.game_models import Kill, Conv
 from loader import bot, db, Game
@@ -37,7 +37,7 @@ async def cop_result(result, chat_obj):
 
             player_obj = chat_obj.get_player(int(result[1]))
             await bot.send_message(player_obj.id,
-                                   'Вас изгнали! Ваше последнее слово?')
+                                   f'{hbold("☠ Вас изгнали! Напишите сюда ваше предсмертное сообщение!")}')
             print(f'[{chat_obj.id}] Коп убивает [ ID {player_obj.id}, {player_obj.name}, {player_obj.role} ]')
 
 
@@ -61,7 +61,8 @@ async def mafia_result(result, chat_obj):
         print(result)
         if result[0] == 'mafia_kill':
             player_obj = chat_obj.get_player(int(result[1]))
-            await bot.send_message(player_obj.id, 'Вас изгнали! Ваше последнее слово?')
+            await bot.send_message(player_obj.id,
+                                   f'{hbold("☠ Вас изгнали! Напишите сюда ваше предсмертное сообщение!")}')
             print(f'[{chat_obj.id}] Мафия убивает [ ID {player_obj.id}, {player_obj.name}, {player_obj.role} ]')
 
 

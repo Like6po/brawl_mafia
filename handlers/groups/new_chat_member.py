@@ -1,8 +1,8 @@
 from aiogram import types
 
-
+from data.db_models import Chat
 from filters import GroupFilter
-from loader import Game, dp
+from loader import Game, dp, db
 
 
 @dp.message_handler(GroupFilter(),
@@ -15,6 +15,9 @@ async def new_member(message: types.Message):
                                  '⚠️ Для адекватной работы мне остро необходимы права администратора!\n'
                                  'Дополнительную информацию можно найти по команде /help в личных сообщениях со мной!')
         else:
+            chat_data: Chat = await db.get_chat(message.chat.id)
+            if not chat_data.is_show_hello_msg:
+                return
             chat_obj = Game.get_chat(message.chat.id)
             if chat_obj:
                 if chat_obj.phase in ['day', 'night']:
@@ -26,7 +29,7 @@ async def new_member(message: types.Message):
                     await message.answer(f"💬 {user.get_mention()}, добро пожаловать!\n"
                                          f"В данный момент идет подбор игроков, вы можете 🎭 присоединиться!")
             else:
-                await message.answer(f"💬 {user.get_mention()}, добро ожаловать!\n"
+                await message.answer(f"💬 {user.get_mention()}, добро пожаловать!\n"
                                      f"В данный момент не идет игры, "
                                      f"вы можете ознакомиться с ℹ️ правилами игры: /help.")
 

@@ -65,3 +65,4 @@ async def not_available_commands(message: types.Message):
                                           f"☠️ Кто-то слышал, как 🙎‍♂️ Бравлер"
                                           f" {hlink(player_obj.name, f'tg://user?id={player_obj.id}')}"
                                           f" кричал перед поражением:\n{hbold(message.text)}")
+                await message.answer('☠ Передал ваше предсмертное сообщение жителям!')

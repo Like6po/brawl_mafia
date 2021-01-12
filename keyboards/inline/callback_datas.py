@@ -84,3 +84,7 @@ settings_show_roles_callback = CallbackData('stg_show_roles',
 settings_show_votes_callback = CallbackData('stg_show_votes',
                                             'action',
                                             'chat_id')
+
+settings_show_hello_msg_callback = CallbackData('stg_show_hello',
+                                                'action',
+                                                'chat_id')

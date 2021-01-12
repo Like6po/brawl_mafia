@@ -1,11 +1,10 @@
-
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.callback_datas import settings_callback, settings_mute_dead_callback, \
     settings_mute_no_players_callback, settings_reg_time_callback, \
     settings_night_time_callback, settings_day_time_callback, settings_voting_time_callback, \
     settings_accept_time_callback, settings_pin_callback, settings_boosts_callback, settings_show_roles_callback, \
-    settings_show_votes_callback
+    settings_show_votes_callback, settings_show_hello_msg_callback
 
 
 def settings_kb_show_to_admin(chat_id):
@@ -23,6 +22,7 @@ def settings_kb_show_to_admin(chat_id):
                                     callback_data=settings_callback.new(action='exit',
                                                                         chat_id=chat_id)))
     return kb_obj
+
 
 ########################
 
@@ -67,6 +67,7 @@ def settings_kb_mute_no_players(chat_id):
                                     callback_data=settings_callback.new(action='mute',
                                                                         chat_id=chat_id)))
     return kb_obj
+
 
 #########################
 
@@ -225,6 +226,7 @@ def settings_kb_accept_time(chat_id):
                                                                         chat_id=chat_id)))
     return kb_obj
 
+
 #########################
 
 
@@ -242,6 +244,9 @@ def settings_kb_some(chat_id):
                                                                         chat_id=chat_id)))
     kb_obj.row(InlineKeyboardButton(text='✋ Тайное голосование',
                                     callback_data=settings_callback.new(action='show_votes',
+                                                                        chat_id=chat_id)))
+    kb_obj.row(InlineKeyboardButton(text='👋 Приветственное сообщение',
+                                    callback_data=settings_callback.new(action='show_hello_msg',
                                                                         chat_id=chat_id)))
     kb_obj.row(InlineKeyboardButton(text='↩️ Назад',
                                     callback_data=settings_callback.new(action='menu',
@@ -299,6 +304,20 @@ def settings_kb_show_votes(chat_id):
     kb_obj.row(InlineKeyboardButton(text='❌ Нет',
                                     callback_data=settings_show_votes_callback.new(action='no',
                                                                                    chat_id=chat_id)))
+    kb_obj.row(InlineKeyboardButton(text='↩️ Назад',
+                                    callback_data=settings_callback.new(action='some',
+                                                                        chat_id=chat_id)))
+    return kb_obj
+
+
+def settings_kb_show_hello_msg(chat_id):
+    kb_obj = InlineKeyboardMarkup()
+    kb_obj.row(InlineKeyboardButton(text='✅ Да',
+                                    callback_data=settings_show_hello_msg_callback.new(action='yes',
+                                                                                       chat_id=chat_id)))
+    kb_obj.row(InlineKeyboardButton(text='❌ Нет',
+                                    callback_data=settings_show_hello_msg_callback.new(action='no',
+                                                                                       chat_id=chat_id)))
     kb_obj.row(InlineKeyboardButton(text='↩️ Назад',
                                     callback_data=settings_callback.new(action='some',
                                                                         chat_id=chat_id)))
