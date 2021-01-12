@@ -3,7 +3,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import ForwardedMessageFilter
 
 
-from data.game_models import Dead_day, Kill, Mute
+from data.game_models import Kill, Mute
 from filters import GroupFilter
 from loader import Game, dp
 

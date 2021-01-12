@@ -4,8 +4,6 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 from aiogram.utils.markdown import hlink
 
-
-from data.game_models import Kill
 from filters import GroupFilter
 from loader import Game, dp
 

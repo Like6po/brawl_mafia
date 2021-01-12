@@ -28,10 +28,6 @@ async def extend(message: types.Message):
     await message.reply(f'📢 Время подбора продлено на {chat_obj.register_time // 2} секунд 🕗!')
 
 
-
-
-
-
 @dp.message_handler(Command('extend'), GroupFilter())
 async def close2(message: types.Message):
     await message.delete()
