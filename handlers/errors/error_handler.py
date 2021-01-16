@@ -1,9 +1,11 @@
 import logging
 
 from aiogram import types
-from aiogram.utils.markdown import hbold
+from aiogram.utils.markdown import hbold, hlink
 
+from data.game_models import Kill
 from loader import dp, Game
+from utils.misc.mailing_process import roles_dict_brawl
 
 
 @dp.errors_handler()
@@ -56,6 +58,19 @@ async def errors_handler(update: types.update.Update, exception):
         logging.info(f'Unauthorized: {exception}')
         if exception.args[0] == 'Forbidden: bot is not a member of the supergroup chat':
             Game.remove_chat(Game.get_chat(update.message.chat.id))
+        if exception.args[0] == 'Forbidden: bot was blocked by the user':
+            result = Game.search_player(update.message.from_user.id)
+            if not result:
+                return True
+            chat_obj, player_obj = result
+            try:
+                await dp.bot.send_message(chat_obj.id,
+                                          f"{hlink(player_obj.id, f'tg://user?id={player_obj.id}')}"
+                                          f" забомбил 🔥 и заблочил меня!\n"
+                                          f"Его персонаж был - {roles_dict_brawl[player_obj.role]}")
+            except Exception as e:
+                print(e, 'rrr111')
+            chat_obj.kill(player_obj, Kill('afk'))
         return True
 
     if isinstance(exception, InvalidQueryID):
@@ -73,4 +88,3 @@ async def errors_handler(update: types.update.Update, exception):
         logging.exception(f'CantParseEntities: {exception} \nUpdate: {update}')
         return True
     logging.exception(f'Update: {update} \n{exception}')
-

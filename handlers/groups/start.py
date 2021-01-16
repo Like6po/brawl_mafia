@@ -25,6 +25,7 @@ async def start(message: types.Message):
         register_message = await message.answer(
             f"📢 Регистрация открыта!\nДо конца регистрации: {chat.register_time} секунд 🕗!",
             reply_markup=start_join_kb(message.chat.id))
+        print(f'начат подбор в беседе {message.chat.id} {message.chat.title}')
 
         Game.add_chat(Conv(chat_id=message.chat.id,
                            is_pin_register=chat.is_pin_register,

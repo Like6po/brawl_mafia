@@ -26,7 +26,7 @@ class Database:
         async with self.pool.acquire() as connector:
             async with connector.cursor() as cur:
                 result: Optional[tuple] = None
-                print(sql, parameters)
+                #print(sql, parameters)
                 await cur.execute(sql, parameters)
                 if commit:
                     await connector.commit()

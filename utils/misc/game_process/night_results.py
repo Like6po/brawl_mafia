@@ -83,20 +83,21 @@ async def homeless_result(result, chat_obj):
             player_obj = chat_obj.get_player(int(result[1]))
             await bot.send_message(player_obj.id,
                                    'Барли спросил у вас бутылку пива для своего бара этой ночью.')
+            print(f'[{chat_obj.id}] Бомж приходит к [ ID {player_obj.id}, {player_obj.name}, {player_obj.role} ]')
             for effect in player_obj.effects:
                 if effect == Kill():
                     if effect.killer == 'mafia':
-                        await bot.send_message(chat_obj.homeless.id,
+                        return await bot.send_message(chat_obj.homeless.id,
                                                msg_night_res_show_homeless_results(player_obj, chat_obj.don))
                     elif effect.killer == 'cop':
-                        await bot.send_message(chat_obj.homeless.id,
+                        return await bot.send_message(chat_obj.homeless.id,
                                                msg_night_res_show_homeless_results(player_obj, chat_obj.cop))
 
             else:
                 await bot.send_message(chat_obj.homeless.id,
                                        'Вы спокойно спросили бутылку пива и ушли работать в бар дальше.')
 
-            print(f'[{chat_obj.id}] Бомж приходит к [ ID {player_obj.id}, {player_obj.name}, {player_obj.role} ]')
+
 
 
 async def doctor_result(result, chat_obj):
@@ -156,8 +157,9 @@ async def night_results(chat_obj):
                         check = True
 
                     if effect.killer == 'afk':
-                        await bot.send_message(chat_id, msg_day_time_dead_from_afk(player_dead,
-                                                                                   chat_obj.is_show_dead_roles))
+                        await bot.send_message(chat_id,
+                                               msg_day_time_dead_from_afk(player_dead,
+                                                                          chat_obj.is_show_dead_roles))
                     break
 
         if not check:

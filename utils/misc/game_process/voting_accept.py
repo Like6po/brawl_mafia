@@ -1,6 +1,7 @@
 import asyncio
 import time
 
+from aiogram.utils.exceptions import RetryAfter
 from aiogram.utils.markdown import hlink
 
 from data.game_models import Dead_day
@@ -63,7 +64,11 @@ async def voting_accept(chat_id, chat_obj, player_obj):
                                            f"Бравлеры изгнали {hlink(player_obj.name, f'tg://user?id={player_obj.id}')}")
 
                 print(f'[{chat_obj.id}] Жители повесили [ ID {player_obj.id}, {player_obj.name}, {player_obj.role}]!')
-                return await bot.send_message(player_obj.id, 'Тебя изгнали из Бравл Сити на дневном собрании!')
+                try:
+                    return await bot.send_message(player_obj.id, 'Тебя изгнали из Бравл Сити на дневном собрании!')
+                except RetryAfter as e:
+                    await asyncio.sleep(e.timeout)
+                await asyncio.sleep(0.1)
             else:
                 print(f'[{chat_obj.id}] Жители разошлись!')
                 return await bot.send_message(chat_id, 'Бравлеры не пришли к общему решению и никого не изгнали.')
