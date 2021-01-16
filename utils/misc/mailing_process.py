@@ -1,7 +1,7 @@
 import asyncio
 
 from aiogram import types
-from aiogram.utils.exceptions import RetryAfter
+from aiogram.utils.exceptions import RetryAfter, Unauthorized
 from aiogram.utils.markdown import hlink
 
 from data.game_models import Kill
@@ -42,11 +42,16 @@ async def mailing_roles_to_players(chat_obj, bot):
             print(f'[{chat_obj.id}] Успешно отправил сообщение [ID {player.id}, {player.name}, {player.role} ]')
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(player.name, f'tg://user?id={player.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[player.role]}")
+            chat_obj.kill(player, Kill('afk'))
         await asyncio.sleep(0.2)
 
 
 async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
-
     if chat_obj.cop and Kill() not in chat_obj.cop.effects:
         try:
             await bot.send_message(chat_obj.cop.id,
@@ -56,6 +61,12 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
             print(f"[{chat_obj.id}] Отправил ночное сообщение копу [ ID {chat_obj.cop.id}, {chat_obj.cop.name} ]")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.cop.name, f'tg://user?id={chat_obj.cop.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.cop.role]}")
+            chat_obj.kill(chat_obj.cop, Kill('afk'))
         await asyncio.sleep(0.1)
 
     if chat_obj.don and chat_obj.cop and Kill() not in chat_obj.cop.effects:
@@ -66,6 +77,12 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
             print(f"[{chat_obj.id}] Отправил ночное сообщение дону [ ID {chat_obj.don.id}, {chat_obj.don.name} ]")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.don.name, f'tg://user?id={chat_obj.don.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.don.role]}")
+            chat_obj.kill(chat_obj.don, Kill('afk'))
         await asyncio.sleep(0.1)
 
     if chat_obj.doctor and Kill() not in chat_obj.doctor.effects:
@@ -74,9 +91,16 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '🚑👩🏼‍⚕️ Вы можете спасти кого-то от изгнания, но нужно угадать, кого хотят изгнать 🔫!'
                                    '\nКого попытаетесь спасти 💼?',
                                    reply_markup=kb_night_doctor(chat_obj))
-            print(f"[{chat_obj.id}] Отправил ночное сообщение доктору [ ID {chat_obj.doctor.id}, {chat_obj.doctor.name} ]")
+            print(
+                f"[{chat_obj.id}] Отправил ночное сообщение доктору [ ID {chat_obj.doctor.id}, {chat_obj.doctor.name} ]")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.doctor.name, f'tg://user?id={chat_obj.doctor.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.doctor.role]}")
+            chat_obj.kill(chat_obj.doctor, Kill('afk'))
         await asyncio.sleep(0.1)
 
     if chat_obj.whore and Kill() not in chat_obj.whore.effects:
@@ -90,6 +114,12 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                 f"[{chat_obj.id}] Отправил ночное сообщение любовницце [ ID {chat_obj.whore.id}, {chat_obj.whore.name} ] ")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.whore.name, f'tg://user?id={chat_obj.whore.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.whore.role]}")
+            chat_obj.kill(chat_obj.whore, Kill('afk'))
         await asyncio.sleep(0.1)
 
     if chat_obj.homeless and Kill() not in chat_obj.homeless.effects:
@@ -102,6 +132,12 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                 f"[{chat_obj.id}] Отправил ночное сообщение бомжу [ ID {chat_obj.homeless.id}, {chat_obj.homeless.name} ] ")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.homeless.name, f'tg://user?id={chat_obj.homeless.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.homeless.role]}")
+            chat_obj.kill(chat_obj.homeless, Kill('afk'))
         await asyncio.sleep(0.1)
 
     # если есть мафия
@@ -117,6 +153,12 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                     print(f"[{chat_obj.id}] Отправил ночное сообщение мафии [ ID {mafia.id}, {mafia.name} ] ")
                 except RetryAfter as e:
                     await asyncio.sleep(e.timeout)
+                except Unauthorized:
+                    await bot.send_message(chat_obj.id,
+                                           f"{hlink(mafia.name, f'tg://user?id={mafia.id}')}"
+                                           f" забомбил 🔥 и заблочил меня!\n"
+                                           f"Его персонаж был - {roles_dict_brawl[mafia.role]}")
+                    chat_obj.kill(mafia, Kill('afk'))
                 await asyncio.sleep(0.1)
 
     if chat_obj.don and Kill() not in chat_obj.don.effects:
@@ -125,9 +167,16 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '🦅 Вы на сходке банды Булла! '
                                    'Кого из жителей Бравл Сити вы хотите незаконно 🔫 изгнать?',
                                    reply_markup=kb_night_mafia(chat_obj))
-            print(f"[{chat_obj.id}] Отправил ночное сообщение дону мафии [ ID {chat_obj.don.id}, {chat_obj.don.name} ] ")
+            print(
+                f"[{chat_obj.id}] Отправил ночное сообщение дону мафии [ ID {chat_obj.don.id}, {chat_obj.don.name} ] ")
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
+        except Unauthorized:
+            await bot.send_message(chat_obj.id,
+                                   f"{hlink(chat_obj.don.name, f'tg://user?id={chat_obj.don.id}')}"
+                                   f" забомбил 🔥 и заблочил меня!\n"
+                                   f"Его персонаж был - {roles_dict_brawl[chat_obj.don.role]}")
+            chat_obj.kill(chat_obj.don, Kill('afk'))
         await asyncio.sleep(0.1)
 
 
@@ -141,6 +190,12 @@ async def mailing_day_messages_to_players(chat_id, chat_obj, bot) -> types.Messa
                 print(f'[{chat_obj.id}] Отправил сообщение [ ID {player.id}, {player.name}, {player.role}]')
             except RetryAfter as e:
                 await asyncio.sleep(e.timeout)
+            except Unauthorized:
+                await bot.send_message(chat_obj.id,
+                                       f"{hlink(player.name, f'tg://user?id={player.id}')}"
+                                       f" забомбил 🔥 и заблочил меня!\n"
+                                       f"Его персонаж был - {roles_dict_brawl[player.role]}")
+                chat_obj.kill(player, Kill('afk'))
             await asyncio.sleep(0.1)
     try:
         message_voting: types.Message = await bot.send_message(chat_id,
@@ -150,5 +205,3 @@ async def mailing_day_messages_to_players(chat_id, chat_obj, bot) -> types.Messa
     except RetryAfter as e:
         await asyncio.sleep(e.timeout)
     await asyncio.sleep(0.1)
-
-

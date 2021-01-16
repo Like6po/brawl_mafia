@@ -6,6 +6,7 @@ from aiogram.utils.markdown import hbold, hlink
 from data.game_models import Kill
 from keyboards.inline.other import only_in_conv
 from loader import dp, Game
+from utils.misc.game_process.service_defs import try_send
 
 
 @dp.message_handler(ChatTypeFilter(types.ChatType.PRIVATE), commands=['leave', 'settings', 'extend', 'play', 'close'])
@@ -32,24 +33,30 @@ async def not_available_commands(message: types.Message):
                     # для каждой мафии
                     for mafia in chat_obj.mafia:
                         # отправляем сообщение дона всем мафиози
-                        await dp.bot.send_message(mafia.id,
-                                                  f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
-                                                  f"{message.html_text}")
+                        await try_send(player_obj=mafia,
+                                       text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
+                                            f"{hbold(message.text)}",
+                                       chat_obj=chat_obj)
+
             # если роль игрока - мафия
             elif player_obj.role == 'mafia':
                 # если есть дон
                 if chat_obj.don:
-                    await dp.bot.send_message(chat_obj.don.id,
-                                              f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
-                                              f"{message.html_text}")
+                    await try_send(player_obj=chat_obj.don,
+                                   text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
+                                        f"{hbold(message.text)}",
+                                   chat_obj=chat_obj)
+
                 # для каждой мафии
                 for mafia in chat_obj.mafia:
                     # всем кроме отправителя
                     if mafia.id != player_obj.id:
                         # отправляем сообщения мафии всем мафиози
-                        await dp.bot.send_message(mafia.id,
-                                                  f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
-                                                  f"{hbold(message.text)}")
+                        await try_send(player_obj=mafia,
+                                       text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
+                                            f"{hbold(message.text)}",
+                                       chat_obj=chat_obj)
+
         # если не ночь
         elif chat_obj.phase in ['day', 'voting', 'voting1']:
             # если предсмертный крик есть у юзера

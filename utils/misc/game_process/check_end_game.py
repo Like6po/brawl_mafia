@@ -4,21 +4,24 @@ from aiogram.utils.markdown import hlink, hcode, hbold
 
 from data.game_models import Kill, Dead_day, Don
 from loader import Game, db, bot
+from utils.misc.game_process.service_defs import try_send
 from utils.misc.mailing_process import roles_dict_brawl
 
 
-async def send_result(player, gems=None):
+async def send_result(player, chat_obj, gems=None):
     if gems:
-        return await bot.send_message(player.id,
-                                      f"{hbold('Игра окончена! Победа! ')}\n\n"
-                                      f"{hcode(player.name)} ({hbold(roles_dict_brawl[player.role])})\n\n"
-                                      f"💎{gems}\n\n"
-                                      f"Больше информации по команде /profile")
-    else:
-        return await bot.send_message(player.id,
-                                      f"{hbold('Игра окончена! Поражение!')}\n\n"
-                                      f"{hcode(player.name)} ({hbold(roles_dict_brawl[player.role])})\n\n"
-                                      f"Больше информации по команде /profile")
+        return await try_send(player_obj=player,
+                              text=f"{hbold('Игра окончена! Победа! ')}\n\n"
+                                   f"{hcode(player.name)} ({hbold(roles_dict_brawl[player.role])})\n\n"
+                                   f"💎{gems}\n\n"
+                                   f"Больше информации по команде /profile",
+                              chat_obj=chat_obj)
+
+    return await try_send(player_obj=player,
+                          text=f"{hbold('Игра окончена! Поражение!')}\n\n"
+                               f"{hcode(player.name)} ({hbold(roles_dict_brawl[player.role])})\n\n"
+                               f"Больше информации по команде /profile",
+                          chat_obj=chat_obj)
 
 
 async def check_end_game(chat_id, chat_obj):
@@ -34,7 +37,7 @@ async def check_end_game(chat_id, chat_obj):
     print(f"mafia = {mafia}, piece = {piece}")
     text_results_win = 'Победители:'
     text_results_lose = 'Проигравшие:'
-    gems = 2*(len(chat_obj.players)+len(chat_obj.dead_players))
+    gems = 2 * (len(chat_obj.players) + len(chat_obj.dead_players))
     if mafia >= piece:
         for player in chat_obj.players:
             if player.role in ['mafia', 'don']:
@@ -42,18 +45,18 @@ async def check_end_game(chat_id, chat_obj):
                     text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                         f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, wins=1, money=gems)
-                    await send_result(player, gems)
+                    await send_result(player, chat_obj, gems)
 
                 else:
                     text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                          f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, loses=1)
-                    await send_result(player)
+                    await send_result(player, chat_obj)
             else:
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
         for player in chat_obj.dead_players:
             if player.role == 'suicide':
@@ -61,17 +64,17 @@ async def check_end_game(chat_id, chat_obj):
                     text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                         f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, wins=1, money=gems)
-                    await send_result(player, gems)
+                    await send_result(player, chat_obj, gems)
                 else:
                     text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                          f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, loses=1)
-                    await send_result(player)
+                    await send_result(player, chat_obj)
             else:
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
         Game.remove_chat(chat_obj)
         await bot.send_message(chat_id,
@@ -85,26 +88,26 @@ async def check_end_game(chat_id, chat_obj):
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
             else:
                 text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                     f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, wins=1, money=gems)
-                await send_result(player, gems)
+                await send_result(player, chat_obj, gems)
 
         for player in chat_obj.dead_players:
             if player.role == 'suicide' and Dead_day() in player.effects:
                 text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                     f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, wins=1, money=gems)
-                await send_result(player, gems)
+                await send_result(player, chat_obj, gems)
 
             else:
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
         Game.remove_chat(chat_obj)
         await bot.send_message(chat_id,
@@ -118,31 +121,31 @@ async def check_end_game(chat_id, chat_obj):
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
             else:
                 if Kill() not in player.effects:
                     text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                         f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, wins=1, money=gems)
-                    await send_result(player, gems)
+                    await send_result(player, chat_obj, gems)
                 else:
                     text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                          f" - {roles_dict_brawl[player.role]}"
                     await db.upd_player(player.id, loses=1)
-                    await send_result(player)
+                    await send_result(player, chat_obj)
 
         for player in chat_obj.dead_players:
             if player.role == 'suicide' and Dead_day() in player.effects:
                 text_results_win += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                     f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, wins=1, money=gems)
-                await send_result(player, gems)
+                await send_result(player, chat_obj, gems)
             else:
                 text_results_lose += f"\n{hlink(player.name, f'tg://user?id={player.id}')}" \
                                      f" - {roles_dict_brawl[player.role]}"
                 await db.upd_player(player.id, loses=1)
-                await send_result(player)
+                await send_result(player, chat_obj)
 
         Game.remove_chat(chat_obj)
         await bot.send_message(chat_id,

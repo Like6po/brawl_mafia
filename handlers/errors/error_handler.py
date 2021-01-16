@@ -63,13 +63,12 @@ async def errors_handler(update: types.update.Update, exception):
             if not result:
                 return True
             chat_obj, player_obj = result
-            try:
-                await dp.bot.send_message(chat_obj.id,
-                                          f"{hlink(player_obj.id, f'tg://user?id={player_obj.id}')}"
-                                          f" забомбил 🔥 и заблочил меня!\n"
-                                          f"Его персонаж был - {roles_dict_brawl[player_obj.role]}")
-            except Exception as e:
-                print(e, 'rrr111')
+
+            await dp.bot.send_message(chat_obj.id,
+                                      f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}"
+                                      f" забомбил 🔥 и заблочил меня!\n"
+                                      f"Его персонаж был - {roles_dict_brawl[player_obj.role]}")
+
             chat_obj.kill(player_obj, Kill('afk'))
         return True
 

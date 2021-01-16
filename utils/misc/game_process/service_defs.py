@@ -1,5 +1,9 @@
+from asyncio import sleep
+
+from aiogram.utils.exceptions import RetryAfter, Unauthorized
 from aiogram.utils.markdown import hlink
 
+from data.game_models import Kill
 from loader import bot
 from utils.misc.mailing_process import roles_dict_brawl
 
@@ -19,6 +23,21 @@ async def unmute_chat(chat_obj):
                                                 'can_change_info': False, 'can_invite_users': False,
                                                 'can_add_web_page_previews': False, 'can_pin_messages': False})
 
+
+async def try_send(player_obj, text, chat_obj):
+    try:
+        await bot.send_message(player_obj.id,
+                               text)
+        await sleep(0.1)
+    except RetryAfter as e:
+        await sleep(e.timeout)
+        await try_send(player_obj, text, chat_obj)
+    except Unauthorized:
+        await bot.send_message(chat_obj.id,
+                               f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}"
+                               f" забомбил 🔥 и заблочил меня!\n"
+                               f"Его персонаж был - {roles_dict_brawl[player_obj.role]}")
+        chat_obj.kill(player_obj, Kill('afk'))
 
 def msg_day_time_dead_from_mafia(player_dead, is_show_dead_roles):
     if is_show_dead_roles == 1:
