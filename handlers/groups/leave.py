@@ -25,8 +25,8 @@ async def leave(message: types.Message):
             return await message.delete()
 
         chat_obj.kill(player_obj)
-        await message.reply(f"☠️ {hlink(player_obj.name, f'tg://user?id={player_obj.id}')} забомбил 🔥 и ливнул!"
-                            f" Его персонаж был - {roles_dict_brawl[player_obj.role]}")
+        return await message.reply(f"☠️ {hlink(player_obj.name, f'tg://user?id={player_obj.id}')} забомбил 🔥 и ливнул!"
+                                   f" Его персонаж был - {roles_dict_brawl[player_obj.role]}")
 
     player_obj = chat_obj.get_registered_player(message.from_user.id)
     if not player_obj:
@@ -35,8 +35,3 @@ async def leave(message: types.Message):
     chat_obj.registered.remove(player_obj)
     chat_obj.is_new_player_join = True
     await message.reply('⚠️ Вы покинули подбор игроков!')
-
-
-
-
-
