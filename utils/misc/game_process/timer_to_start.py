@@ -85,13 +85,10 @@ async def timer_to_start_game(message: types.Message, time_to_sleep: int, chat_i
         for player_id in players_who_need_back_active_role_to_database:
             await db.upd_player(player_id, active_role=1)
         random.shuffle(chat_obj.players)
-
-        print(chat_obj)
         await bot.send_message(chat_id,
                                f"🙅‍♂️ Подбор закончен!\n\n👥 Бравлеры:\n{chat_obj.get_text_alive_players()}\n\n"
                                f"{chat_obj.get_text_alive_roles()}")
         await mute_chat(chat_obj)
-        print(f'[{chat_obj.id}] Рассылаю сообщения с ролями!')
         await mailing_roles_to_players(chat_obj, bot)
         await bot.send_message(chat_id, '🌑 Первая ночь в Бравл Сити!\nВы можете узнать, какой вы 👥 Бравлер!',
                                reply_markup=game_go_to_bot_kb())
@@ -126,4 +123,3 @@ async def timer_to_start_game(message: types.Message, time_to_sleep: int, chat_i
             if await check_end_game(chat_id, chat_obj):
                 return 1
 
-        print(chat_obj)

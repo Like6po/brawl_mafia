@@ -37,7 +37,16 @@ async def errors_handler(update: types.update.Update, exception):
                                                               f'права {hbold("Блокировка участников")}, '
                                                               f'{hbold("Закрепление сообщений")} '
                                                               f'и {hbold("Удаление сообщений")}!\n'
-                                                              f'Верните меня в беседу и выдайте нужные права!')
+                                                              f'Верните меня в чат и выдайте нужные права!')
+            Game.remove_chat(Game.get_chat(update.message.chat.id))
+            await dp.bot.leave_chat(update.message.chat.id)
+        elif exception.args[0].lower() == "message can't be deleted for everyone":
+            await dp.bot.send_message(update.message.chat.id,
+                                      "У меня нет прав на удаление сообщений. Сделайте чат СУПЕРГРУППОЙ, "
+                                      "верните меня в чат и выдайте мне нужные права.")
+            Game.remove_chat(Game.get_chat(update.message.chat.id))
+            await dp.bot.leave_chat(update.message.chat.id)
+        elif exception.args[0].lower() == 'have no rights to send a message':
             Game.remove_chat(Game.get_chat(update.message.chat.id))
             await dp.bot.leave_chat(update.message.chat.id)
         return True

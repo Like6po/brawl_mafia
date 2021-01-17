@@ -34,7 +34,6 @@ async def check_end_game(chat_id, chat_obj):
             else:
                 piece += 1
 
-    print(f"mafia = {mafia}, piece = {piece}")
     text_results_win = 'Победители:'
     text_results_lose = 'Проигравшие:'
     gems = 2 * (len(chat_obj.players) + len(chat_obj.dead_players))
