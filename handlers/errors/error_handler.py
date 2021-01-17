@@ -1,7 +1,9 @@
 import logging
+import sys
+from types import TracebackType
 
 from aiogram import types
-from aiogram.utils.markdown import hbold, hlink
+from aiogram.utils.markdown import hbold, hlink, quote_html
 
 from data.config import admins
 from data.game_models import Kill
@@ -24,16 +26,16 @@ async def errors_handler(update: types.update.Update, exception):
                                           CantParseEntities, MessageCantBeDeleted, BadRequest,
                                           NotEnoughRightsToPinMessage)
 
-    text_error = f"Update: {update}\nException: {exception}"
+    text_error = f"Update: {update}\nException:{exception}\n{type(exception)}"
     if len(text_error) > 2000:
         i = 2000
         i_prev = 0
         while i < len(text_error):
-            await dp.bot.send_message(admins[0], text_error[i_prev:i])
+            await dp.bot.send_message(admins[0], quote_html(text_error[i_prev:i]))
             i_prev = i
             i += 2000
     else:
-        await dp.bot.send_message(admins[0], text_error)
+        await dp.bot.send_message(admins[0], quote_html(text_error))
 
     if isinstance(exception, CantDemoteChatCreator):
         logging.debug("Can't demote chat creator")
