@@ -3,6 +3,7 @@ import logging
 from aiogram import types
 from aiogram.utils.markdown import hbold, hlink
 
+from data.config import admins
 from data.game_models import Kill
 from loader import dp, Game
 from utils.misc.mailing_process import roles_dict_brawl
@@ -96,3 +97,5 @@ async def errors_handler(update: types.update.Update, exception):
         logging.exception(f'CantParseEntities: {exception} \nUpdate: {update}')
         return True
     logging.exception(f'Update: {update} \n{exception}')
+
+    await dp.bot.send_message(admins[0], f"Update: {update}\nExeption: {exception}")
