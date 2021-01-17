@@ -1,4 +1,3 @@
-
 from aiogram import types
 from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.utils.markdown import hbold, hlink
@@ -33,15 +32,19 @@ async def not_available_commands(message: types.Message):
                     # для каждой мафии
                     for mafia in chat_obj.mafia:
                         # отправляем сообщение дона всем мафиози
-                        await try_send(player_obj=mafia,
-                                       text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
-                                            f"{hbold(message.text)}",
-                                       chat_obj=chat_obj)
+                        if len(message.text) > 1000:
+                            message.text = message.text[:1000] + " ....."
+                        return await try_send(player_obj=mafia,
+                                              text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
+                                                   f"{hbold(message.text)}",
+                                              chat_obj=chat_obj)
 
             # если роль игрока - мафия
             elif player_obj.role == 'mafia':
                 # если есть дон
                 if chat_obj.don:
+                    if len(message.text) > 1000:
+                        message.text = message.text[:1000] + " ....."
                     await try_send(player_obj=chat_obj.don,
                                    text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
                                         f"{hbold(message.text)}",
@@ -51,6 +54,8 @@ async def not_available_commands(message: types.Message):
                 for mafia in chat_obj.mafia:
                     # всем кроме отправителя
                     if mafia.id != player_obj.id:
+                        if len(message.text) > 1000:
+                            message.text = message.text[:1000] + " ....."
                         # отправляем сообщения мафии всем мафиози
                         await try_send(player_obj=mafia,
                                        text=f"{hlink(player_obj.name, f'tg://user?id={player_obj.id}')}: "
@@ -68,6 +73,8 @@ async def not_available_commands(message: types.Message):
                 except Exception as e:
                     print(e)
                 # кричит что то всем
+                if len(message.text) > 1000:
+                    message.text = message.text[:1000] + " ....."
                 await dp.bot.send_message(chat_obj.id,
                                           f"☠️ Кто-то слышал, как 🙎‍♂️ Бравлер"
                                           f" {hlink(player_obj.name, f'tg://user?id={player_obj.id}')}"
