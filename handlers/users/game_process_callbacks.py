@@ -47,11 +47,9 @@ async def day_vote_voting(cbq: types.CallbackQuery, callback_data: dict):
 
         if action == 'like':
             chat_obj.accept_votes_like.append(player)
-            print(f'[{chat_obj.id}] Лайк от [ID {player.id}, {player.name}, {player.role}]')
 
         elif action == 'dislike':
             chat_obj.accept_votes_dislike.append(player)
-            print(f'[{chat_obj.id}] Дизлайк от [ID {player.id}, {player.name}, {player.role}]')
 
         chat_obj.is_new_vote = True
 
@@ -94,9 +92,7 @@ async def day_vote(cbq: types.CallbackQuery, callback_data: dict):
 
     player.day_voting_to = vote_to_id
     chat_obj.day_votes_ids.append(vote_to_id)
-    print(
-        f'[{chat_obj.id}] Игрок [ID {player.id}, {player.name}, {player.role}] '
-        f'проголосовал за [ID {vote_to_player.id}, {vote_to_player.name}, {vote_to_player.role}]')
+
     await cbq.message.edit_text('Выбор сделан')
     if chat_obj.is_show_day_votes:
         return await dp.bot.send_message(chat_obj.id, f"{hlink(player.name, f'tg://user?id={player.id}')} "
@@ -132,12 +128,12 @@ async def night_cop(cbq: types.CallbackQuery, callback_data: dict):
     chat_obj.cop.kill_to = None
     chat_obj.cop.check_to = None
     if action == 'check':
-        print(f"Коп {player.name} выбрал проверку!")
+
         await cbq.message.edit_text(text='Кого вы хотите проверить?',
                                     reply_markup=cb_q_cop_check_kb(chat_obj.id,
                                                                    chat_obj.players))
     elif action == 'kill':
-        print(f"Коп {player.name} выбрал убийство")
+
         await cbq.message.edit_text(text='Кого вы хотите изгнать?',
                                     reply_markup=cb_q_cop_kill_kb(chat_obj.id,
                                                                   chat_obj.players))
@@ -174,7 +170,7 @@ async def night_vote_mafia(cbq: types.CallbackQuery, callback_data: dict):
 
     player.go_to = vote_to_id
     chat_obj.mafia_votes_ids.append(vote_to_id)
-    print(f"Мафия {player.name} проголосовала за {vote_to_player.name}.")
+
     await cbq.message.edit_text('Выбор сделан!')
 
     for mafia in chat_obj.mafia:
@@ -221,13 +217,13 @@ async def night_vote_cop(cbq: types.CallbackQuery, callback_data: dict):
 
     if action == 'check':
         player.check_to = vote_to_id
-        print(f"Коп {player.name} чекнул {vote_to_player.name}.")
+
         await cbq.message.edit_text(text='Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Кольт пошел на поиски банды Булла...')
     elif action == 'kill':
         player.kill_to = vote_to_id
-        print(f"Коп {player.name} убил {vote_to_player.name}.")
+
         await cbq.message.edit_text(text='Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Кольт изгоняет кого-то из Бравл Сити...')
@@ -259,11 +255,11 @@ async def night_vote(cbq: types.CallbackQuery, callback_data: dict):
     if player.role == 'doctor':
         if vote_to_id == player.id:
             if Heal_self() in player.effects:
-                print(f"Доктор {player.name} прогосовал за самоотхил.")
+
                 return await cbq.answer('Нельзя спасти себя дважды!')
 
         player.go_to = vote_to_id
-        print(f"Доктор {player.name} прогосовал за хил {vote_to_player.name}.")
+
         await cbq.message.edit_text('Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Пэм отправилась к нуждающимся в помощи')
@@ -276,7 +272,7 @@ async def night_vote(cbq: types.CallbackQuery, callback_data: dict):
             return await cbq.answer('Нельзя проверять свою банду!')
 
         player.check_to = vote_to_id
-        print(f"Дон {player.name} чекнул {vote_to_player.name}.")
+
         await cbq.message.edit_text('Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Булл отправился в кусты, чтобы проследить за кое-кем...')
@@ -286,7 +282,7 @@ async def night_vote(cbq: types.CallbackQuery, callback_data: dict):
             return await cbq.answer('Нельзя выбрать себя!')
 
         player.go_to = vote_to_id
-        print(f"Любовница {player.name} пришла к {vote_to_player.name}.")
+
         await cbq.message.edit_text('Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Пайпер устроила кому-то классную ночь!')
@@ -296,7 +292,7 @@ async def night_vote(cbq: types.CallbackQuery, callback_data: dict):
             return await cbq.answer('Нельзя выбрать себя!')
 
         player.go_to = vote_to_id
-        print(f"Божм {player.name} пошел к {vote_to_player.name}.")
+
         await cbq.message.edit_text('Выбор сделан!')
         await dp.bot.send_message(chat_obj.id,
                                   'Барли пошел искать пиво для своего бара...')

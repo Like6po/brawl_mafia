@@ -28,6 +28,16 @@ async def errors_handler(update: types.update.Update, exception):
         logging.debug("Can't demote chat creator")
         return True
 
+    if isinstance(exception, MessageCantBeDeleted):
+        logging.exception(f'BadRequest: {exception} \nUpdate: {update}')
+        await dp.bot.send_message(update.message.chat.id, f'Для адекватной работы мне необходимы '
+                                                          f'права {hbold("Блокировка участников")}, '
+                                                          f'{hbold("Закрепление сообщений")} '
+                                                          f'и {hbold("Удаление сообщений")}!\n'
+                                                          f'Верните меня в чат и выдайте нужные права!')
+        Game.remove_chat(Game.get_chat(update.message.chat.id))
+        await dp.bot.leave_chat(update.message.chat.id)
+
     if isinstance(exception, BadRequest):
         logging.exception(f'BadRequest: {exception} \nUpdate: {update}')
 
@@ -41,7 +51,7 @@ async def errors_handler(update: types.update.Update, exception):
                                                               f'Верните меня в чат и выдайте нужные права!')
             Game.remove_chat(Game.get_chat(update.message.chat.id))
             await dp.bot.leave_chat(update.message.chat.id)
-        elif exception.args[0].lower() == "message can't be deleted for everyone":
+        elif exception.args[0].lower() in ["message can't be deleted for everyone", "message can't be deleted"]:
             await dp.bot.send_message(update.message.chat.id,
                                       "У меня нет прав на удаление сообщений. Сделайте чат СУПЕРГРУППОЙ, "
                                       "верните меня в чат и выдайте мне нужные права.")
@@ -50,6 +60,7 @@ async def errors_handler(update: types.update.Update, exception):
         elif exception.args[0].lower() == 'have no rights to send a message':
             Game.remove_chat(Game.get_chat(update.message.chat.id))
             await dp.bot.leave_chat(update.message.chat.id)
+
         return True
 
     if isinstance(exception, MessageNotModified):
@@ -66,7 +77,8 @@ async def errors_handler(update: types.update.Update, exception):
 
     if isinstance(exception, Unauthorized):
         logging.info(f'Unauthorized: {exception}')
-        if exception.args[0] == 'Forbidden: bot is not a member of the supergroup chat':
+        if exception.args[0] in ['Forbidden: bot is not a member of the supergroup chat',
+                                 'Forbidden: bot was kicked from the group chat']:
             Game.remove_chat(Game.get_chat(update.message.chat.id))
         if exception.args[0] == 'Forbidden: bot was blocked by the user':
             result = Game.search_player(update.message.from_user.id)

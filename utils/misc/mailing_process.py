@@ -39,7 +39,7 @@ async def mailing_roles_to_players(chat_obj, bot):
                                    game_msg_text_role(player.role,
                                                       chat_obj.mafia,
                                                       chat_obj.don))
-            print(f'[{chat_obj.id}] Успешно отправил сообщение [ID {player.id}, {player.name}, {player.role} ]')
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -58,7 +58,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '❗️ Вам нужно сделать выбор!\n'
                                    'Бездумно изгнать 🔫👿 из Бравл Сити или расчетливо проверить 👁🔎?',
                                    reply_markup=kb_night_cop(chat_id))
-            print(f"[{chat_obj.id}] Отправил ночное сообщение копу [ ID {chat_obj.cop.id}, {chat_obj.cop.name} ]")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -74,7 +74,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
             await bot.send_message(chat_obj.don.id,
                                    'Вам нужно вычислить 🔫🕵️ Кольта!\nКого хотите пробить 📞 по своим связям?',
                                    reply_markup=kb_night_don(chat_obj))
-            print(f"[{chat_obj.id}] Отправил ночное сообщение дону [ ID {chat_obj.don.id}, {chat_obj.don.name} ]")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -91,8 +91,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '🚑👩🏼‍⚕️ Вы можете спасти кого-то от изгнания, но нужно угадать, кого хотят изгнать 🔫!'
                                    '\nКого попытаетесь спасти 💼?',
                                    reply_markup=kb_night_doctor(chat_obj))
-            print(
-                f"[{chat_obj.id}] Отправил ночное сообщение доктору [ ID {chat_obj.doctor.id}, {chat_obj.doctor.name} ]")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -110,8 +109,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    'от которой придется оправляться целые сутки 🕑!\n'
                                    'К кому хотите заскочить 🔜?',
                                    reply_markup=kb_night_whore(chat_obj))
-            print(
-                f"[{chat_obj.id}] Отправил ночное сообщение любовницце [ ID {chat_obj.whore.id}, {chat_obj.whore.name} ] ")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -128,8 +126,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '🍾 В вашем баре закончились бутылки пива!\n'
                                    'У кого спросить лишнюю бутылку?',
                                    reply_markup=kb_night_homeless(chat_obj))
-            print(
-                f"[{chat_obj.id}] Отправил ночное сообщение бомжу [ ID {chat_obj.homeless.id}, {chat_obj.homeless.name} ] ")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -150,7 +147,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                            '🦅 Вы на сходке банды Булла! '
                                            'Кого из жителей Бравл Сити вы хотите незаконно 🔫 изгнать?',
                                            reply_markup=kb_night_mafia(chat_obj))
-                    print(f"[{chat_obj.id}] Отправил ночное сообщение мафии [ ID {mafia.id}, {mafia.name} ] ")
+
                 except RetryAfter as e:
                     await asyncio.sleep(e.timeout)
                 except Unauthorized:
@@ -167,8 +164,7 @@ async def mailing_night_messages_to_players(chat_obj, chat_id, bot):
                                    '🦅 Вы на сходке банды Булла! '
                                    'Кого из жителей Бравл Сити вы хотите незаконно 🔫 изгнать?',
                                    reply_markup=kb_night_mafia(chat_obj))
-            print(
-                f"[{chat_obj.id}] Отправил ночное сообщение дону мафии [ ID {chat_obj.don.id}, {chat_obj.don.name} ] ")
+
         except RetryAfter as e:
             await asyncio.sleep(e.timeout)
         except Unauthorized:
@@ -187,7 +183,7 @@ async def mailing_day_messages_to_players(chat_id, chat_obj, bot) -> types.Messa
                 await bot.send_message(player.id,
                                        'Кого вы хотите изгнать?',
                                        reply_markup=kb_voting_time_users(chat_id, chat_obj.players, player))
-                print(f'[{chat_obj.id}] Отправил сообщение [ ID {player.id}, {player.name}, {player.role}]')
+
             except RetryAfter as e:
                 await asyncio.sleep(e.timeout)
             except Unauthorized:
