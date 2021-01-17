@@ -51,10 +51,9 @@ async def voting_accept(chat_id, chat_obj, player_obj):
             likes = len(set(chat_obj.accept_votes_like))
             dislikes = len(set(chat_obj.accept_votes_dislike))
             if likes > dislikes:
-                try:
-                    chat_obj.kill(player_obj, reason=Dead_day())
-                except Exception as e:
-                    print(e, '132323235gfdgdfgdf454')
+
+                chat_obj.kill(player_obj, reason=Dead_day())
+
                 if chat_obj.is_show_dead_roles:
                     await bot.send_message(chat_id,
                                            f"Бравлеры изгнали {hlink(player_obj.name, f'tg://user?id={player_obj.id}')}"
@@ -63,12 +62,12 @@ async def voting_accept(chat_id, chat_obj, player_obj):
                     await bot.send_message(chat_id,
                                            f"Бравлеры изгнали {hlink(player_obj.name, f'tg://user?id={player_obj.id}')}")
 
-                print(f'[{chat_obj.id}] Жители повесили [ ID {player_obj.id}, {player_obj.name}, {player_obj.role}]!')
+
                 try:
                     return await bot.send_message(player_obj.id, 'Тебя изгнали из Бравл Сити на дневном собрании!')
                 except RetryAfter as e:
                     await asyncio.sleep(e.timeout)
                 await asyncio.sleep(0.1)
             else:
-                print(f'[{chat_obj.id}] Жители разошлись!')
+
                 return await bot.send_message(chat_id, 'Бравлеры не пришли к общему решению и никого не изгнали.')

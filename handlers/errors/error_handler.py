@@ -24,19 +24,20 @@ async def errors_handler(update: types.update.Update, exception):
                                           CantParseEntities, MessageCantBeDeleted, BadRequest,
                                           NotEnoughRightsToPinMessage)
 
+    text_error = f"Update: {update}\nException: {exception}"
+    if len(text_error) > 2000:
+        i = 2000
+        i_prev = 0
+        while i < len(text_error):
+            await dp.bot.send_message(admins[0], text_error[i_prev:i])
+            i_prev = i
+            i += 2000
+    else:
+        await dp.bot.send_message(admins[0], text_error)
+
     if isinstance(exception, CantDemoteChatCreator):
         logging.debug("Can't demote chat creator")
         return True
-
-    if isinstance(exception, MessageCantBeDeleted):
-        logging.exception(f'BadRequest: {exception} \nUpdate: {update}')
-        await dp.bot.send_message(update.message.chat.id, f'Для адекватной работы мне необходимы '
-                                                          f'права {hbold("Блокировка участников")}, '
-                                                          f'{hbold("Закрепление сообщений")} '
-                                                          f'и {hbold("Удаление сообщений")}!\n'
-                                                          f'Верните меня в чат и выдайте нужные права!')
-        Game.remove_chat(Game.get_chat(update.message.chat.id))
-        await dp.bot.leave_chat(update.message.chat.id)
 
     if isinstance(exception, BadRequest):
         logging.exception(f'BadRequest: {exception} \nUpdate: {update}')
@@ -110,4 +111,4 @@ async def errors_handler(update: types.update.Update, exception):
         return True
     logging.exception(f'Update: {update} \n{exception}')
 
-    await dp.bot.send_message(admins[0], f"Update: {update}\nExeption: {exception}")
+
