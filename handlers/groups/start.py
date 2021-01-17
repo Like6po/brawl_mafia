@@ -39,7 +39,8 @@ async def start(message: types.Message):
                            vote_time=chat.vote_time,
                            accept_time=chat.accept_time,
                            is_show_dead_roles=chat.is_show_dead_roles,
-                           is_show_day_votes=chat.is_show_day_votes))
+                           is_show_day_votes=chat.is_show_day_votes,
+                           is_allow_attachments_unmute=chat.is_allow_attachments_unmute))
         if chat.is_pin_register:
             await register_message.pin()
 
@@ -54,7 +55,7 @@ async def start(message: types.Message):
         except MessageToReplyNotFound:
             return await message.answer(f"❌ {message.from_user.get_mention()}, регистрация уже идёт!")
 
-    if chat_obj.phase == 'day':
+    if chat_obj.phase in ['day', 'voting', 'voting1']:
         # если день, ответить, что игра идет
         await message.delete()
         temp_message = await message.answer(f"❌ {message.from_user.get_mention()}, игра уже идёт!")
@@ -64,3 +65,4 @@ async def start(message: types.Message):
     if chat_obj.phase == 'night':
         # если ночь, удалить
         return await message.delete()
+

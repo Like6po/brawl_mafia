@@ -6,12 +6,12 @@ from keyboards.inline.callback_datas import settings_callback, settings_mute_dea
     settings_mute_no_players_callback, settings_reg_time_callback, settings_night_time_callback, \
     settings_day_time_callback, settings_voting_time_callback, settings_accept_time_callback, settings_pin_callback, \
     settings_boosts_callback, settings_show_roles_callback, settings_show_votes_callback, \
-    settings_show_hello_msg_callback
+    settings_show_hello_msg_callback, settings_allow_att_callback
 
 from keyboards.inline.settings import settings_kb_mute, settings_kb_show_to_admin, settings_kb_mute_dead, \
     settings_kb_mute_no_players, settings_kb_timings, settings_kb_reg_time, settings_kb_some, settings_kb_nighttime, \
     settings_kb_daytime, settings_kb_voting_time, settings_kb_accept_time, settings_kb_pin, settings_kb_boosts, \
-    settings_kb_show_roles, settings_kb_show_votes, settings_kb_show_hello_msg
+    settings_kb_show_roles, settings_kb_show_votes, settings_kb_show_hello_msg, settings_kb_allow_att
 from loader import dp, db
 
 
@@ -45,7 +45,8 @@ async def settings_cbq(cbq: types.CallbackQuery, callback_data: dict):
                                     f"Бустеры: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"Показ ролей: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"Тайное голосование: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"Приветственное сообщение: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"Приветственное сообщение: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"Разрешать медиа при размуте: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_show_to_admin(chat_id))
     elif action == 'mute':
         await cbq.message.edit_text(f"Здесь вы можете настроить, чьи сообщения я буду удалять во время игры.\n\n"
@@ -104,7 +105,8 @@ async def settings_cbq(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
 
     elif action == 'pin':
@@ -130,6 +132,10 @@ async def settings_cbq(cbq: types.CallbackQuery, callback_data: dict):
         await cbq.message.edit_text('Показывать приветственное сообщение каждому входящему пользователю?\n\n'
                                     f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
                                     reply_markup=settings_kb_show_hello_msg(chat_id))
+    elif action == 'allow_att':
+        await cbq.message.edit_text('Разрешать ли медиа (картинки, гиф, стикеры, гс) при размуте чата днём?\n\n'
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
+                                    reply_markup=settings_kb_allow_att(chat_id))
     else:
         await cbq.answer('Сообщите администратору об ошибке N143...')
 
@@ -323,7 +329,8 @@ async def stg_pin(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
     else:
         await cbq.answer('Ошибка stg_pin')
@@ -350,7 +357,8 @@ async def stg_boosts(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
     else:
         await cbq.answer('Ошибка stg_boosts')
@@ -377,7 +385,8 @@ async def stg_show_roles(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
     else:
         await cbq.answer('Ошибка stg_show_roles')
@@ -404,7 +413,8 @@ async def stg_show_votes(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
     else:
         await cbq.answer('Ошибка stg_show_votes')
@@ -431,7 +441,36 @@ async def stg_show_votes(cbq: types.CallbackQuery, callback_data: dict):
                                     f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
                                     f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
                                     f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
-                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}",
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
                                     reply_markup=settings_kb_some(chat_id))
     else:
         await cbq.answer('Ошибка stg_show_hello_msg')
+
+
+@dp.callback_query_handler(settings_allow_att_callback.filter())
+async def stg_show_votes(cbq: types.CallbackQuery, callback_data: dict):
+    chat_id = int(callback_data.get('chat_id'))
+    action = callback_data.get('action')
+
+    if cbq.from_user not in [member.user for member in await dp.bot.get_chat_administrators(chat_id)]:
+        await cbq.answer('Вы уже не являетесь администратором чата!')
+        return await cbq.message.delete()
+
+    if action in ['yes', 'no']:
+        if action == 'yes':
+            await db.set_chat(chat_id, is_allow_att_unmute=1)
+        elif action == 'no':
+            await db.set_chat(chat_id, is_allow_att_unmute=0)
+        await cbq.answer('Успешно!')
+        chat_data: Chat = await db.get_chat(chat_id)
+        await cbq.message.edit_text('Остальные параметры:\n\n'
+                                    f"{hbold('Пин регистрации')}: {'Да' if chat_data.is_pin_register else 'Нет'}\n"
+                                    f"{hbold('Бустеры')}: {'Да' if chat_data.is_active_boosts else 'Нет'}\n"
+                                    f"{hbold('Показ ролей')}: {'Да' if chat_data.is_show_dead_roles else 'Нет'}\n"
+                                    f"{hbold('Тайное голосование')}: {'Да' if chat_data.is_show_day_votes else 'Нет'}\n"
+                                    f"{hbold('Приветственное сообщение')}: {'Да' if chat_data.is_show_hello_msg else 'Нет'}\n"
+                                    f"{hbold('Разрешать медиа при размуте')}: {'Да' if chat_data.is_allow_attachments_unmute else 'Нет'}",
+                                    reply_markup=settings_kb_some(chat_id))
+    else:
+        await cbq.answer('Ошибка stg_allow_unmute_msg')

@@ -155,7 +155,8 @@ class Conv:
 
     def __init__(self, chat_id: int, is_pin_register: bool, is_active_boosts: bool, is_dead_talk: bool,
                  register_message_id: int, is_nonplayers_talk: bool, register_time: int, night_time: int,
-                 day_time: int, vote_time: int, accept_time: int, is_show_dead_roles: bool, is_show_day_votes: bool):
+                 day_time: int, vote_time: int, accept_time: int, is_show_dead_roles: bool, is_show_day_votes: bool,
+                 is_allow_attachments_unmute: bool):
 
         self.id: int = chat_id
         self.registered: List[Player] = []
@@ -199,6 +200,7 @@ class Conv:
 
         self.is_new_vote: bool = False
         self.is_accept_end: bool = False
+        self.is_allow_attachments_unmute: bool = is_allow_attachments_unmute
 
     def __repr__(self):
         text = f"[ ID {self.id}                ]\n" \

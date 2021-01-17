@@ -88,3 +88,6 @@ settings_show_votes_callback = CallbackData('stg_show_votes',
 settings_show_hello_msg_callback = CallbackData('stg_show_hello',
                                                 'action',
                                                 'chat_id')
+settings_allow_att_callback = CallbackData('stg_allow_att',
+                                           'action',
+                                           'chat_id')

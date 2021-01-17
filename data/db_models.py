@@ -36,6 +36,7 @@ class Chat:
         self.is_show_day_votes: bool = bool(data[15])
         self.is_pin_register: bool = bool(data[16])
         self.is_show_hello_msg: bool = bool(data[17])
+        self.is_allow_attachments_unmute: bool = bool(data[18])
 
     def __repr__(self):
         return f"<ChatObject: ID, chat_id, chat_title, chat_username\n" \
