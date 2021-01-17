@@ -59,13 +59,13 @@ class Database:
 
     async def new_player(self, user_id) -> None:
         sql: str = """
-        INSERT IGNORE INTO player (user_id) VALUES (%s)
+        INSERT INTO player (user_id) VALUES (%s)
         """
         await self.execute(sql, parameters=(user_id), commit=True)
 
     async def new_chat(self, chat_id) -> None:
         sql: str = """
-        INSERT IGNORE INTO chat (chat_id) VALUES (%s)
+        INSERT INTO chat (chat_id) VALUES (%s)
         """
         await self.execute(sql, parameters=(chat_id), commit=True)
 
