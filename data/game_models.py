@@ -233,23 +233,26 @@ class Conv:
 
     def kill(self, player: Union[Peace, Comissar, Mafia, Don, Doctor, Whore, Suicide, Homeless],
              reason=Dead()):
-        self.players.remove(player)
-        player.effects = [reason]
-        self.dead_players.append(player)
-        if player.role == 'don':
-            self.don = None
-        elif player.role == 'cop':
-            self.cop = None
-        elif player.role == 'doctor':
-            self.doctor = None
-        elif player.role == 'suicide':
-            self.suicide = None
-        elif player.role == 'whore':
-            self.whore = None
-        elif player.role == 'homeless':
-            self.homeless = None
-        elif player.role == 'mafia':
-            self.mafia.remove(player)
+        try:
+            self.players.remove(player)
+            player.effects = [reason]
+            self.dead_players.append(player)
+            if player.role == 'don':
+                self.don = None
+            elif player.role == 'cop':
+                self.cop = None
+            elif player.role == 'doctor':
+                self.doctor = None
+            elif player.role == 'suicide':
+                self.suicide = None
+            elif player.role == 'whore':
+                self.whore = None
+            elif player.role == 'homeless':
+                self.homeless = None
+            elif player.role == 'mafia':
+                self.mafia.remove(player)
+        except ValueError:
+            pass
 
     def move_dead_to_dead(self):
         for player in self.players:
@@ -311,9 +314,10 @@ class Conv:
                 self.don.check_to = None
                 return result
             else:
-                self.don.fails += 1
-                if self.don.fails > 3:
-                    self.don.effects.append(Kill('afk'))
+                if self.cop:
+                    self.don.fails += 1
+                    if self.don.fails > 3:
+                        self.don.effects.append(Kill('afk'))
                 return None
         return None
 
