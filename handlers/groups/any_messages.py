@@ -21,6 +21,10 @@ async def any_messages(message: types.Message):
                                    types.ContentType.VOICE, types.ContentType.ANIMATION, types.ContentType.DOCUMENT,
                                    types.ContentType.STICKER])
 async def any_messages(message: types.Message):
+    if message.from_user in [member.user for member in await message.chat.get_administrators()]:
+        if message.text and message.text.startswith('!'):
+            return
+
     chat_obj = Game.get_chat(message.chat.id)
     if not chat_obj:
         return
