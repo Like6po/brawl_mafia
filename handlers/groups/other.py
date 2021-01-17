@@ -12,7 +12,7 @@ from filters import GroupFilter
 from keyboards.inline.profile import profile_kb
 
 
-@dp.message_handler(GroupFilter(), Command('profile'))
+@dp.message_handler(Command('profile'), GroupFilter())
 async def profile_conv(message: types.Message):
     user_data: User = await db.get_player(message.from_user.id)
     await message.delete()
