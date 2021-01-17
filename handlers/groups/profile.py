@@ -15,7 +15,6 @@ from keyboards.inline.profile import profile_kb
 @dp.message_handler(Command('profile'), GroupFilter())
 async def profile_conv(message: types.Message):
     user_data: User = await db.get_player(message.from_user.id)
-    await message.delete()
     try:
         await dp.bot.send_message(message.from_user.id,
                                   f"{hcode(message.from_user.full_name)}\n\n"
@@ -37,4 +36,5 @@ async def profile_conv(message: types.Message):
             ' затем пропишите команду снова.')
         await asyncio.sleep(5)
         await temp_message.delete()
+    await message.delete()
 
