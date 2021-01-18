@@ -1,4 +1,3 @@
-
 from typing import Optional
 
 import aiomysql
@@ -26,7 +25,27 @@ class Database:
         async with self.pool.acquire() as connector:
             async with connector.cursor() as cur:
                 result: Optional[tuple] = None
-                print(sql, parameters)
+
+                try:
+                    await cur.execute(sql, parameters)
+                except IntegrityError:
+                    return result
+
+                if commit:
+                    await connector.commit()
+                if fetchall:
+                    result = await cur.fetchall()
+                if fetchone:
+                    result = await cur.fetchone()
+
+                return result
+
+    async def execute_without_integrity_check(self, sql: str, parameters: tuple = (),
+                                              fetchone: bool = False, fetchall: bool = False, commit: bool = False) -> \
+            Optional[tuple]:
+        async with self.pool.acquire() as connector:
+            async with connector.cursor() as cur:
+                result: Optional[tuple] = None
                 await cur.execute(sql, parameters)
                 if commit:
                     await connector.commit()
@@ -34,7 +53,7 @@ class Database:
                     result = await cur.fetchall()
                 if fetchone:
                     result = await cur.fetchone()
-                print(result)
+
                 return result
 
     async def get_player(self, user_id) -> Optional[User]:
@@ -106,7 +125,7 @@ class Database:
         INSERT INTO transactions (transaction_id, amount, user_id) VALUES (%s, %s, %s)
         """
         try:
-            await self.execute(sql, parameters=(payment_id, amount, user_id), commit=True)
+            await self.execute_without_integrity_check(sql, parameters=(payment_id, amount, user_id), commit=True)
             return True
         except IntegrityError:
             return False
