@@ -22,6 +22,7 @@ class Database:
 
     async def execute(self, sql: str, parameters: tuple = (),
                       fetchone: bool = False, fetchall: bool = False, commit: bool = False) -> Optional[tuple]:
+        await self.connect()
         async with self.pool.acquire() as connector:
             async with connector.cursor() as cur:
                 result: Optional[tuple] = None
@@ -29,6 +30,7 @@ class Database:
                 try:
                     await cur.execute(sql, parameters)
                 except IntegrityError:
+                    self.pool.close()
                     return result
 
                 if commit:
@@ -37,12 +39,13 @@ class Database:
                     result = await cur.fetchall()
                 if fetchone:
                     result = await cur.fetchone()
-
+                self.pool.close()
                 return result
 
     async def execute_without_integrity_check(self, sql: str, parameters: tuple = (),
                                               fetchone: bool = False, fetchall: bool = False, commit: bool = False) -> \
             Optional[tuple]:
+        await self.connect()
         async with self.pool.acquire() as connector:
             async with connector.cursor() as cur:
                 result: Optional[tuple] = None
@@ -53,7 +56,7 @@ class Database:
                     result = await cur.fetchall()
                 if fetchone:
                     result = await cur.fetchone()
-
+                self.pool.close()
                 return result
 
     async def get_player(self, user_id) -> Optional[User]:
