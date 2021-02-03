@@ -9,7 +9,7 @@ def generate_link_to_pay(user_id, amount):
     link = f"https://oplata.qiwi.com/" \
            f"create?" \
            f"publicKey={qiwi_public_key}" \
-           f"&amount=30" \
+           f"&amount={amount}" \
            f"&comment=brawl_mafia:{amount}:{user_id}" \
            f"&successUrl=https://t.me/brawl_mafia_bot"
     #return link
