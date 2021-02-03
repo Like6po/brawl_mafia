@@ -1,1 +1,1 @@
-Бот для игры в Мафию с элементами Brawl Stars.
+Репозиторий содержит исходный код бот для игры в Мафию с элементами Brawl Stars @brawl_mafia_bot (t.me/brawl_mafia_bot)
